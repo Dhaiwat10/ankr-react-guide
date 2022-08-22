@@ -5,6 +5,7 @@ import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 import type { AppProps } from 'next/app';
+import { Provider } from 'ankr-react';
 
 const { chains, provider } = configureChains(
   [chain.mainnet],
@@ -27,11 +28,13 @@ const wagmiClient = createClient({
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider chains={chains}>
-        <Component {...pageProps} />
-      </RainbowKitProvider>
-    </WagmiConfig>
+    <Provider>
+      <WagmiConfig client={wagmiClient}>
+        <RainbowKitProvider chains={chains}>
+          <Component {...pageProps} />
+        </RainbowKitProvider>
+      </WagmiConfig>
+    </Provider>
   );
 }
 

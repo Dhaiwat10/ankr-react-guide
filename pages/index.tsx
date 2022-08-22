@@ -1,47 +1,53 @@
 import type { NextPage } from 'next';
-import type { FC } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccountBalance } from 'ankr-react';
+import { useAccount } from 'wagmi';
 
 const Home: NextPage = () => {
+  const { address } = useAccount();
+
+  const {
+    data: balanceData,
+    isLoading: balanceLoading,
+    error: balanceError,
+  } = useAccountBalance({
+    walletAddress: address as string,
+    blockchain: 'eth',
+  });
+
   return (
     <div className='py-6 justify-center text-center'>
       <div className='flex justify-center'>
         <ConnectButton />
       </div>
 
-      <h1 className='text-4xl font-bold mt-6'>🚀 create-web3-frontend</h1>
-      <InfoSection />
-    </div>
-  );
-};
+      <h1 className='text-4xl font-bold mt-6'>
+        🚀 Ankr React Hooks Playground
+      </h1>
 
-const InfoSection: FC = () => {
-  return (
-    <div className='mt-10'>
-      <h2 className='text-xl font-bold'>If you need help</h2>
-      <div className='flex flex-col gap-2 mt-2'>
-        <a
-          href='https://wagmi.sh'
-          target='_blank'
-          className='underline text-gray-600'
-        >
-          Link to wagmi docs
-        </a>
-        <a
-          href='https://github.com/dhaiwat10/create-web3-frontend'
-          target='_blank'
-          className='underline text-gray-600'
-        >
-          Open an issue on Github
-        </a>
-        <a
-          href='https://twitter.com/dhaiwat10'
-          target='_blank'
-          className='underline text-gray-600'
-        >
-          DM me on Twitter
-        </a>
-      </div>
+      <h3 className='mt-6 font-bold text-slate-500'>ERC20 Token Balances</h3>
+
+      {balanceLoading ? (
+        <p className='mt-2'>Loading...</p>
+      ) : (
+        <table className='mx-auto mt-2'>
+          <thead>
+            <th>Symbol</th>
+            <th>Balance</th>
+          </thead>
+
+          <tbody>
+            {balanceData?.assets?.map((asset) => {
+              return (
+                <tr>
+                  <td>{asset.tokenSymbol}</td>
+                  <td>{asset.balance}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
